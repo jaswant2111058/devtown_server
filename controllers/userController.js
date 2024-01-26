@@ -1,5 +1,5 @@
 const users = require('../models/users');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const sendmail = require('../utils/mailSender');
 
@@ -27,6 +27,7 @@ exports.authMiddleware = async (req, res, next) => {
 
         // Attach decoded email to req object for further use
         req.email = decoded.email;
+        req.user_id = user._id
         next();
     } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {

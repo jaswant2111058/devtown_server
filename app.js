@@ -5,10 +5,11 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const cors = require('cors')
+const client =require("./postgreClient/client")
 
-
-const indexRouter = require('./routes/indexRouter');
+const taskRouter = require('./routes/taskRouter');
 const authRouter = require('./routes/userRouter');
+
 
 
 const app = express();
@@ -37,13 +38,19 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.use('/', taskRouter);
 app.use('/', authRouter);
 
 
-
+client.connect()
+  .then(() => { 
+    console.log('Connected to PostgreSQL');
+    
+  })
+  .catch((error) => {
+    console.error('Error connecting to PostgreSQL database', error);
+  })
 
 app.listen(process.env.PORT || '5000', () => {
     console.log(`Server started at port ${process.env.PORT || '5000'}`);
