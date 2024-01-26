@@ -154,8 +154,7 @@ exports.createColumn = async (req, res) => {
 // Create a task
 exports.createTask = async (req, res) => {
     try {
-        const { column_id, subTaskTitle, title, description, status } = req.body;
-
+        const { column_id, subtask_title, title, description, status } = req.body;
         const insertTaskQuery = 'INSERT INTO Tasks (column_id, title, description, status) VALUES ($1, $2, $3, $4) RETURNING *';
         const taskValues = [column_id, title, description, status];
 
@@ -166,12 +165,9 @@ exports.createTask = async (req, res) => {
                     message: "Database Server Error"
                 });
             }
-
             console.log('Task inserted successfully:', result.rows[0]);
-
             const insertSubtaskQuery = 'INSERT INTO Subtasks (task_id, subtask_title, isCompleted) VALUES ($1, $2, $3) RETURNING *';
-            const subtaskValues = [result.rows[0].task_id, subTaskTitle, false];
-
+            const subtaskValues = [result.rows[0].task_id, subtask_title, false];
             connection.query(insertSubtaskQuery, subtaskValues, (subtaskErr, subtaskResult) => {
                 if (subtaskErr) {
                     console.error('Error executing subtask query', subtaskErr);
